@@ -14,16 +14,12 @@ jobs:
         platform:
           - os: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
-            bundles: deb,appimage
           - os: macos-latest
             target: aarch64-apple-darwin
-            bundles: dmg,app
           - os: macos-latest
             target: x86_64-apple-darwin
-            bundles: dmg,app
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            bundles: msi,nsis
 
     runs-on: ${{ matrix.platform.os }}
 
@@ -52,7 +48,7 @@ jobs:
         run: npm ci
 
       - name: Build Tauri app
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v0.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -75,4 +71,4 @@ jobs:
             - ✅ 進捗報告の精密化
           releaseDraft: false
           prerelease: false
-          args: --target ${{ matrix.platform.target }} --bundles ${{ matrix.platform.bundles }}
+          args: --target ${{ matrix.platform.target }}

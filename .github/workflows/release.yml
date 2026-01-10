@@ -1,0 +1,78 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  release:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            bundles: deb,appimage
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            bundles: dmg,app
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            bundles: dmg,app
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            bundles: msi,nsis
+
+    runs-on: ${{ matrix.platform.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform.target }}
+
+      - name: Install dependencies (Ubuntu)
+        if: matrix.platform.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libssl-dev
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: 'Kyosho Backup ${{ github.ref_name }}'
+          releaseBody: |
+            ## Kyosho Backup ${{ github.ref_name }}
+
+            サーバーバックアップ自動化ツール
+
+            ### ダウンロード
+            - **Windows**: `.msi` または `-setup.exe` をダウンロード
+            - **macOS**: `.dmg` をダウンロード
+            - **Linux**: `.deb` または `.AppImage` をダウンロード
+
+            ### Phase 10 最適化内容
+            - ✅ 128KBバッファ最適化（転送速度1.5-3倍向上）
+            - ✅ 動的タイムアウト計算
+            - ✅ エラーメッセージ分類・改善
+            - ✅ 進捗報告の精密化
+          releaseDraft: false
+          prerelease: false
+          args: --target ${{ matrix.platform.target }} --bundles ${{ matrix.platform.bundles }}

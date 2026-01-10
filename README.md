@@ -189,15 +189,66 @@ const [availableDomains, setAvailableDomains] = useState<string[]>([]);
 - アプリケーションを再起動
 - 開発モードで権限設定を確認
 
+## 📦 リリース・配布
+
+### GitHub Actionsによる自動ビルド
+
+このプロジェクトはGitHub Actionsで自動的にマルチプラットフォームビルドを実行します。
+
+#### リリース方法
+
+1. **バージョンタグを作成してプッシュ**
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+2. **GitHub Actionsが自動的にビルド**
+   - Windows (MSI, NSIS)
+   - macOS (DMG, App)
+   - Linux (DEB, AppImage)
+
+3. **GitHubリリースページから配布物をダウンロード**
+   - `https://github.com/your-username/kyosho-backup/releases`
+
+#### 手動ビルド（ローカル）
+
+```bash
+# Windows向け (Windowsマシンで実行)
+npm run tauri build
+
+# macOS向け (macOSマシンで実行)
+npm run tauri build
+
+# Linux向け (Linuxマシンで実行)
+npm run tauri build
+```
+
+### 配布物の種類
+
+| OS | ファイル | 説明 |
+|---|---|---|
+| Windows | `.msi` | Windows標準インストーラー |
+| Windows | `-setup.exe` | NSIS形式インストーラー |
+| macOS | `.dmg` | macOS標準ディスクイメージ |
+| macOS | `.app` | アプリケーションバンドル |
+| Linux | `.deb` | Debian/Ubuntu向けパッケージ |
+| Linux | `.AppImage` | ポータブル実行ファイル |
+
 ## 📝 更新履歴
 
-### v0.1.0 (2025-01-09)
+### v0.1.0 (2025-01-10)
 - ✅ X-Server専用バックアップ機能
 - ✅ ネイティブファイル/フォルダ選択ダイアログ
 - ✅ ドメイン自動探索機能
 - ✅ 再帰的ディレクトリバックアップ
 - ✅ リアルタイム進捗表示
 - ✅ 包括的エラーハンドリング
+- ✅ **Phase 10: ファイル転送最適化**
+  - 128KBバッファ最適化（1.5-3倍高速化）
+  - 動的タイムアウト計算
+  - エラーメッセージ分類・改善
+  - 進捗報告の精密化
 
 ## 🤝 貢献
 

@@ -1,7 +1,7 @@
 [package]
 name = "kyosho-backup"
-version = "0.1.0"
-description = "Cross-platform server backup automation tool built with Tauri, React, and TypeScript"
+version = "0.1.1"
+description = "エックスサーバー専用バックアップ自動化ツール - Tauri, React, TypeScript製"
 authors = ["Yuta Matsuura"]
 edition = "2021"
 

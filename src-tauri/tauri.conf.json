@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "productName": "Kyosho Backup",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "identifier": "com.yutamatsuura.kyosho-backup",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -47,15 +47,20 @@
     "targets": "all",
     "category": "Utility",
     "copyright": "Copyright © 2025 Yuta Matsuura",
-    "shortDescription": "Cross-platform server backup automation tool",
-    "longDescription": "Kyosho Backup is a cross-platform desktop application for automating server backup processes via SSH/SFTP connections. Built with Tauri, React, and TypeScript.",
+    "shortDescription": "エックスサーバー専用バックアップ自動化ツール",
+    "longDescription": "Kyosho Backupはエックスサーバー専用のデスクトップアプリケーションです。SSH/SFTP接続でサーバーファイルを安全かつ効率的にバックアップします。",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.png",
       "icons/icon.ico"
-    ]
+    ],
+    "windows": {
+      "wix": {
+        "language": "ja-JP"
+      }
+    }
   },
   "plugins": {
     "fs": {

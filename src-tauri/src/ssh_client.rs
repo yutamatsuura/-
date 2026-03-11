@@ -619,6 +619,16 @@ impl SshClient {
         format!("❌ エラーが発生しました: {}", error)
     }
 
+    /// Windowsで使用できないファイル名文字をアンダースコアに置換する
+    fn sanitize_filename(name: &str) -> String {
+        name.chars()
+            .map(|c| match c {
+                '?' | '*' | ':' | '"' | '<' | '>' | '|' => '_',
+                _ => c,
+            })
+            .collect()
+    }
+
     /// 再帰的にディレクトリをバックアップする
     fn backup_directory_recursive<'a>(
         &'a self,
@@ -645,14 +655,17 @@ impl SshClient {
 
         for (entry_path, stat) in entries {
             if let Some(entry_name) = entry_path.file_name() {
+                let name_str = match entry_name.to_str() {
+                    Some(s) => s,
+                    None => continue, // UTF-8変換できないファイル名はスキップ
+                };
                 // 隠しファイル/ディレクトリをスキップ（. で始まるもの）
-                if let Some(name_str) = entry_name.to_str() {
-                    if name_str.starts_with('.') {
-                        continue;
-                    }
+                if name_str.starts_with('.') {
+                    continue;
                 }
 
-                let local_entry_path = local_dir.join(entry_name);
+                let sanitized_name = Self::sanitize_filename(name_str);
+                let local_entry_path = local_dir.join(&sanitized_name);
 
                 if stat.is_file() {
                     // ファイルをダウンロード（個別ファイルに10分のタイムアウト）
@@ -738,14 +751,17 @@ impl SshClient {
             }
 
             if let Some(entry_name) = entry_path.file_name() {
+                let name_str = match entry_name.to_str() {
+                    Some(s) => s,
+                    None => continue, // UTF-8変換できないファイル名はスキップ
+                };
                 // 隠しファイル/ディレクトリをスキップ（. で始まるもの）
-                if let Some(name_str) = entry_name.to_str() {
-                    if name_str.starts_with('.') {
-                        continue;
-                    }
+                if name_str.starts_with('.') {
+                    continue;
                 }
 
-                let local_entry_path = local_dir.join(entry_name);
+                let sanitized_name = Self::sanitize_filename(name_str);
+                let local_entry_path = local_dir.join(&sanitized_name);
 
                 if stat.is_file() {
                     // 進捗報告（スロットル制御付き - 正確な転送バイト数で更新）

@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "productName": "Kyosho Backup",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "identifier": "com.yutamatsuura.kyosho-backup",
   "build": {
     "beforeDevCommand": "npm run dev",

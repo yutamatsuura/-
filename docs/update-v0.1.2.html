@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kyosho Backup v0.1.2 アップデート手順</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
+      background: #f0f4f8;
+      color: #1a202c;
+      line-height: 1.7;
+    }
+
+    /* ヘッダー */
+    .hero {
+      background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+      color: white;
+      padding: 56px 24px 48px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 999px;
+      padding: 4px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(24px, 5vw, 40px);
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      font-size: 17px;
+      opacity: 0.85;
+      max-width: 520px;
+      margin: 0 auto 28px;
+    }
+    .version-arrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 10px 24px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .version-arrow .arrow { opacity: 0.6; font-size: 16px; }
+
+    /* メインコンテンツ */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* 修正内容カード */
+    .fix-card {
+      background: #ebf8ff;
+      border: 1px solid #bee3f8;
+      border-left: 4px solid #3182ce;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 40px;
+    }
+    .fix-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #2b6cb0;
+      margin-bottom: 10px;
+    }
+    .fix-card p {
+      font-size: 14px;
+      color: #2d3748;
+    }
+    .fix-card strong { color: #1a365d; }
+
+    .safe-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f0fff4;
+      border: 1px solid #9ae6b4;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #276749;
+      margin-top: 14px;
+    }
+
+    /* OS タブ */
+    .os-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .os-tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      color: #718096;
+      transition: all 0.15s;
+    }
+    .os-tab:hover { border-color: #90cdf4; color: #2b6cb0; }
+    .os-tab.active {
+      border-color: #3182ce;
+      background: #ebf8ff;
+      color: #2b6cb0;
+    }
+    .os-tab .icon { font-size: 22px; }
+
+    .os-panel { display: none; }
+    .os-panel.active { display: block; }
+
+    /* ステップカード */
+    .steps { display: flex; flex-direction: column; gap: 16px; }
+
+    .step {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+    }
+    .step-number {
+      width: 36px;
+      height: 36px;
+      background: #3182ce;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .step-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a202c;
+    }
+    .step-body {
+      padding: 0 24px 24px 76px;
+    }
+    .step-body p {
+      font-size: 14px;
+      color: #4a5568;
+      margin-bottom: 10px;
+    }
+
+    /* ファイル名ボックス */
+    .file-box {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 12px 0;
+    }
+    .file-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      font-size: 14px;
+    }
+    .file-row + .file-row { border-top: 1px solid #edf2f7; }
+    .file-label {
+      background: #e2e8f0;
+      color: #4a5568;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .file-label.recommended {
+      background: #bee3f8;
+      color: #2b6cb0;
+    }
+    .file-name {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      color: #2d3748;
+      word-break: break-all;
+    }
+
+    /* 警告ボックス */
+    .warning-box {
+      background: #fffbeb;
+      border: 1px solid #f6e05e;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 12px 0;
+    }
+    .warning-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #744210;
+      margin-bottom: 8px;
+    }
+    .warning-steps {
+      list-style: none;
+      counter-reset: wstep;
+    }
+    .warning-steps li {
+      counter-increment: wstep;
+      font-size: 13px;
+      color: #744210;
+      padding: 3px 0 3px 28px;
+      position: relative;
+    }
+    .warning-steps li::before {
+      content: counter(wstep);
+      position: absolute;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      background: #f6e05e;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 11px;
+      line-height: 20px;
+      text-align: center;
+    }
+
+    /* 完了バナー */
+    .complete-banner {
+      background: linear-gradient(135deg, #f0fff4, #c6f6d5);
+      border: 1px solid #9ae6b4;
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 28px;
+    }
+    .complete-icon { font-size: 36px; }
+    .complete-text h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #276749;
+      margin-bottom: 4px;
+    }
+    .complete-text p {
+      font-size: 13px;
+      color: #2f855a;
+    }
+
+    /* セクション見出し */
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #718096;
+      text-transform: uppercase;
+      margin: 40px 0 16px;
+    }
+
+    /* フッター */
+    .footer {
+      text-align: center;
+      padding: 32px;
+      font-size: 12px;
+      color: #a0aec0;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 24px;
+    }
+    .footer a { color: #3182ce; text-decoration: none; }
+
+    @media (max-width: 480px) {
+      .step-body { padding: 0 16px 20px 16px; }
+      .step-header { padding: 16px; }
+      .os-tab { font-size: 13px; padding: 12px 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<div class="hero">
+  <div class="hero-badge">バグ修正アップデート</div>
+  <h1>Kyosho Backup</h1>
+  <p>特定のサイトでバックアップが失敗する問題を修正しました</p>
+  <div class="version-arrow">
+    <span>v0.1.1</span>
+    <span class="arrow">→</span>
+    <span>v0.1.2</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 修正内容 -->
+  <div class="fix-card">
+    <div class="fix-card-title">🔧 今回の修正内容</div>
+    <p>
+      WordPressのテーマフォルダなど、<strong>フォルダ名に特殊文字（例：<code>?</code>）が含まれている場合</strong>、
+      Windowsでローカルフォルダの作成に失敗しバックアップが中断されていました。<br>
+      v0.1.2 ではこの文字を自動的に置き換えてバックアップを完了させるよう修正しています。
+    </p>
+    <div class="safe-badge">✅ 設定は引き継がれます。再設定は不要です。</div>
+  </div>
+
+  <!-- OS タブ -->
+  <div class="os-tabs">
+    <button class="os-tab active" onclick="switchOS('windows')">
+      <span class="icon">🪟</span> Windows
+    </button>
+    <button class="os-tab" onclick="switchOS('mac')">
+      <span class="icon">🍎</span> macOS
+    </button>
+  </div>
+
+  <!-- Windows 手順 -->
+  <div id="panel-windows" class="os-panel active">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-number">1</div>
+          <div class="step-title">新しいインストーラーをダウンロード</div>
+        </div>
+        <div class="step-body">
+          <p>共有された Google Drive フォルダを開き、以下のファイルをダウンロードしてください。</p>
+          <div class="file-box">
+            <div class="file-row">
+              <span class="file-label recommended">推奨</span>
+              <span class="file-name">Kyosho.Backup_0.1.2_x64_ja-JP.msi</span>
+            </div>
+            <div class="file-row">
+              <span class="file-label">代替</span>
+              <span class="file-name">Kyosho.Backup_0.1.2_x64-setup.exe</span>
+            </div>
+          </div>
+          <p>ダウンロードしたファイルは「ダウンロード」フォルダに保存されます。</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-number">2</div>
+          <div class="step-title">インストーラーをダブルクリック</div>
+        </div>
+        <div class="step-body">
+          <p>ダウンロードした <code>.msi</code> ファイルをダブルクリックして実行してください。</p>
+          <div class="warning-box">
+            <div class="warning-title">⚠️「Windows によって PC が保護されました」と表示された場合</div>
+            <ol class="warning-steps">
+              <li>「詳細情報」をクリック</li>
+              <li>「実行」をクリック</li>
+            </ol>
+          </div>
+          <p style="font-size:12px; color:#718096; margin-top:8px;">
+            ※ これはコード署名証明書を省略しているため表示されます。ツール自体に問題はありません。
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-number">3</div>
+          <div class="step-title">画面の指示に従ってインストール</div>
+        </div>
+        <div class="step-body">
+          <p>「次へ」→「インストール」の順にクリックするだけで完了です。</p>
+          <p>以前のバージョンは自動的に上書きされます。</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-number">4</div>
+          <div class="step-title">動作確認</div>
+        </div>
+        <div class="step-body">
+          <p>Kyosho Backup を起動して確認してください：</p>
+          <div class="file-box">
+            <div class="file-row">
+              <span>☑️&nbsp; 設定画面を開き、SSH 秘密鍵が引き継がれている</span>
+            </div>
+            <div class="file-row">
+              <span>☑️&nbsp; 「接続テスト」が正常に完了する</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="complete-banner">
+      <div class="complete-icon">🎉</div>
+      <div class="complete-text">
+        <h3>アップデート完了！</h3>
+        <p>これで特殊文字を含むフォルダ名でも正常にバックアップできます。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- macOS 手順 -->
+  <div id="panel-mac" class="os-panel">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-number">1</div>
+          <div class="step-title">お使いの Mac を確認してダウンロード</div>
+        </div>
+        <div class="step-body">
+          <p>画面左上の 🍎 → 「この Mac について」でチップを確認してください。</p>
+          <div class="file-box">
+            <div class="file-row">
+              <span class="file-label recommended">Apple M1/M2/M3</span>
+              <span class="file-name">Kyosho.Backup_0.1.2_aarch64.dmg</span>
+            </div>
+            <div class="file-row">
+              <span class="file-label">Intel</span>
+              <span class="file-name">Kyosho.Backup_0.1.2_x64.dmg</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-number">2</div>
+          <div class="step-title">DMG を開いてインストール</div>
+        </div>
+        <div class="step-body">
+          <p>ダウンロードした <code>.dmg</code> ファイルをダブルクリックします。</p>
+          <p>開いたウィンドウで <strong>Kyosho Backup</strong> のアイコンを <strong>Applications フォルダ</strong>にドラッグしてください。</p>
+          <p>「上書きしますか？」と聞かれたら「置き換える」を選択します。</p>
+          <div class="warning-box">
+            <div class="warning-title">⚠️「開発元を確認できないため開けません」と表示された場合</div>
+            <ol class="warning-steps">
+              <li>Finder で「アプリケーション」フォルダを開く</li>
+              <li>Kyosho Backup を<strong>右クリック</strong>→「開く」</li>
+              <li>確認ダイアログで「開く」をクリック（初回のみ）</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <div class="step-number">3</div>
+          <div class="step-title">動作確認</div>
+        </div>
+        <div class="step-body">
+          <p>アプリを起動して確認してください：</p>
+          <div class="file-box">
+            <div class="file-row">
+              <span>☑️&nbsp; 設定画面を開き、SSH 秘密鍵が引き継がれている</span>
+            </div>
+            <div class="file-row">
+              <span>☑️&nbsp; 「接続テスト」が正常に完了する</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="complete-banner">
+      <div class="complete-icon">🎉</div>
+      <div class="complete-text">
+        <h3>アップデート完了！</h3>
+        <p>これで特殊文字を含むフォルダ名でも正常にバックアップできます。</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Kyosho Backup v0.1.2 &nbsp;|&nbsp; © 2025 Yuta Matsuura &nbsp;|&nbsp;
+  問題が発生した場合はご連絡ください
+</div>
+
+<script>
+  function switchOS(os) {
+    document.querySelectorAll('.os-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.os-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector(`#panel-${os}`).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

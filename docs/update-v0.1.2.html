@@ -54,7 +54,19 @@
       font-size: 20px;
       font-weight: 700;
     }
-    .version-arrow .arrow { opacity: 0.6; font-size: 16px; }
+    .version-arrow .arrow {
+      opacity: 0.6;
+      display: flex;
+      align-items: center;
+    }
+    .hero-date {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 20px;
+      font-size: 14px;
+      opacity: 0.75;
+    }
 
     /* メインコンテンツ */
     .container {
@@ -70,7 +82,7 @@
       border-left: 4px solid #3182ce;
       border-radius: 12px;
       padding: 24px;
-      margin-bottom: 40px;
+      margin-bottom: 24px;
     }
     .fix-card-title {
       display: flex;
@@ -101,6 +113,40 @@
       margin-top: 14px;
     }
 
+    /* アンインストール不要カード */
+    .uninstall-card {
+      background: #f0fff4;
+      border: 1px solid #9ae6b4;
+      border-left: 4px solid #38a169;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .uninstall-icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      background: #38a169;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .uninstall-icon svg { color: white; }
+    .uninstall-body h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #276749;
+      margin-bottom: 6px;
+    }
+    .uninstall-body p {
+      font-size: 14px;
+      color: #2f855a;
+    }
+
     /* OS タブ */
     .os-tabs {
       display: flex;
@@ -112,7 +158,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       padding: 14px;
       border: 2px solid #e2e8f0;
       border-radius: 12px;
@@ -129,7 +175,7 @@
       background: #ebf8ff;
       color: #2b6cb0;
     }
-    .os-tab .icon { font-size: 22px; }
+    .os-tab svg { flex-shrink: 0; }
 
     .os-panel { display: none; }
     .os-panel.active { display: block; }
@@ -212,6 +258,18 @@
       word-break: break-all;
     }
 
+    /* チェックリスト */
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      font-size: 14px;
+      color: #2d3748;
+    }
+    .check-row + .check-row { border-top: 1px solid #edf2f7; }
+    .check-row svg { flex-shrink: 0; color: #38a169; }
+
     /* 警告ボックス */
     .warning-box {
       background: #fffbeb;
@@ -223,12 +281,13 @@
     .warning-title {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       font-size: 13px;
       font-weight: 700;
       color: #744210;
       margin-bottom: 8px;
     }
+    .warning-title svg { flex-shrink: 0; color: #d69e2e; }
     .warning-steps {
       list-style: none;
       counter-reset: wstep;
@@ -248,9 +307,6 @@
       height: 20px;
       background: #f6e05e;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-weight: 700;
       font-size: 11px;
       line-height: 20px;
@@ -265,10 +321,20 @@
       padding: 20px 24px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
       margin-top: 28px;
     }
-    .complete-icon { font-size: 36px; }
+    .complete-icon {
+      width: 48px;
+      height: 48px;
+      background: #38a169;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .complete-icon svg { color: white; }
     .complete-text h3 {
       font-size: 16px;
       font-weight: 700;
@@ -280,16 +346,6 @@
       color: #2f855a;
     }
 
-    /* セクション見出し */
-    .section-title {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: #718096;
-      text-transform: uppercase;
-      margin: 40px 0 16px;
-    }
-
     /* フッター */
     .footer {
       text-align: center;
@@ -299,12 +355,12 @@
       border-top: 1px solid #e2e8f0;
       margin-top: 24px;
     }
-    .footer a { color: #3182ce; text-decoration: none; }
 
     @media (max-width: 480px) {
       .step-body { padding: 0 16px 20px 16px; }
       .step-header { padding: 16px; }
       .os-tab { font-size: 13px; padding: 12px 8px; }
+      .uninstall-card { flex-direction: column; gap: 12px; }
     }
   </style>
 </head>
@@ -317,8 +373,18 @@
   <p>特定のサイトでバックアップが失敗する問題を修正しました</p>
   <div class="version-arrow">
     <span>v0.1.1</span>
-    <span class="arrow">→</span>
+    <span class="arrow">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </span>
     <span>v0.1.2</span>
+  </div>
+  <div class="hero-date">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+    リリース日：2026年3月11日
   </div>
 </div>
 
@@ -326,22 +392,54 @@
 
   <!-- 修正内容 -->
   <div class="fix-card">
-    <div class="fix-card-title">🔧 今回の修正内容</div>
+    <div class="fix-card-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+      </svg>
+      今回の修正内容
+    </div>
     <p>
       WordPressのテーマフォルダなど、<strong>フォルダ名に特殊文字（例：<code>?</code>）が含まれている場合</strong>、
       Windowsでローカルフォルダの作成に失敗しバックアップが中断されていました。<br>
       v0.1.2 ではこの文字を自動的に置き換えてバックアップを完了させるよう修正しています。
     </p>
-    <div class="safe-badge">✅ 設定は引き継がれます。再設定は不要です。</div>
+    <div class="safe-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      設定は引き継がれます。再設定は不要です。
+    </div>
+  </div>
+
+  <!-- アンインストール不要 -->
+  <div class="uninstall-card">
+    <div class="uninstall-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <div class="uninstall-body">
+      <h3>アンインストールは不要です</h3>
+      <p>
+        現在インストール済みの方は、<strong>アンインストールせずにそのまま新しいインストーラーを実行</strong>してください。<br>
+        インストーラーが自動的に上書きアップデートを行います。設定・秘密鍵の情報もそのまま引き継がれます。
+      </p>
+    </div>
   </div>
 
   <!-- OS タブ -->
   <div class="os-tabs">
-    <button class="os-tab active" onclick="switchOS('windows')">
-      <span class="icon">🪟</span> Windows
+    <button class="os-tab active" onclick="switchOS('windows', event)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3 5.557L10.448 4.5v7.048H3V5.557zM3 18.445L10.448 19.5V12.5H3v5.945zM11.207 4.389L21 3v8.5h-9.793V4.389zM11.207 19.611V12.5H21V21l-9.793-1.389z"/>
+      </svg>
+      Windows
     </button>
-    <button class="os-tab" onclick="switchOS('mac')">
-      <span class="icon">🍎</span> macOS
+    <button class="os-tab" onclick="switchOS('mac', event)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+      </svg>
+      macOS
     </button>
   </div>
 
@@ -355,7 +453,7 @@
           <div class="step-title">新しいインストーラーをダウンロード</div>
         </div>
         <div class="step-body">
-          <p>共有された Google Drive フォルダを開き、以下のファイルをダウンロードしてください。</p>
+          <p>お伝えしたリンクからダウンロードページを開き、以下のファイルをクリックしてダウンロードしてください。</p>
           <div class="file-box">
             <div class="file-row">
               <span class="file-label recommended">推奨</span>
@@ -366,6 +464,7 @@
               <span class="file-name">Kyosho.Backup_0.1.2_x64-setup.exe</span>
             </div>
           </div>
+          <p style="font-size:12px; color:#718096;">ファイルが見当たらない場合は、ページを少し下にスクロールすると「Assets」という欄にファイルが並んでいます。</p>
           <p>ダウンロードしたファイルは「ダウンロード」フォルダに保存されます。</p>
         </div>
       </div>
@@ -373,12 +472,17 @@
       <div class="step">
         <div class="step-header">
           <div class="step-number">2</div>
-          <div class="step-title">インストーラーをダブルクリック</div>
+          <div class="step-title">インストーラーをダブルクリックして実行</div>
         </div>
         <div class="step-body">
-          <p>ダウンロードした <code>.msi</code> ファイルをダブルクリックして実行してください。</p>
+          <p>ダウンロードした <code>.msi</code> ファイルをダブルクリックしてください。</p>
           <div class="warning-box">
-            <div class="warning-title">⚠️「Windows によって PC が保護されました」と表示された場合</div>
+            <div class="warning-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              「Windows によって PC が保護されました」と表示された場合
+            </div>
             <ol class="warning-steps">
               <li>「詳細情報」をクリック</li>
               <li>「実行」をクリック</li>
@@ -409,11 +513,17 @@
         <div class="step-body">
           <p>Kyosho Backup を起動して確認してください：</p>
           <div class="file-box">
-            <div class="file-row">
-              <span>☑️&nbsp; 設定画面を開き、SSH 秘密鍵が引き継がれている</span>
+            <div class="check-row">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              設定画面を開き、SSH 秘密鍵が引き継がれている
             </div>
-            <div class="file-row">
-              <span>☑️&nbsp; 「接続テスト」が正常に完了する</span>
+            <div class="check-row">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              「接続テスト」が正常に完了する
             </div>
           </div>
         </div>
@@ -422,9 +532,13 @@
     </div>
 
     <div class="complete-banner">
-      <div class="complete-icon">🎉</div>
+      <div class="complete-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
       <div class="complete-text">
-        <h3>アップデート完了！</h3>
+        <h3>アップデート完了</h3>
         <p>これで特殊文字を含むフォルダ名でも正常にバックアップできます。</p>
       </div>
     </div>
@@ -440,7 +554,8 @@
           <div class="step-title">お使いの Mac を確認してダウンロード</div>
         </div>
         <div class="step-body">
-          <p>画面左上の 🍎 → 「この Mac について」でチップを確認してください。</p>
+          <p>画面左上のリンゴマーク → 「この Mac について」でチップを確認してください。</p>
+          <p>お伝えしたリンクからダウンロードページを開き、お使いの Mac に合ったファイルをクリックしてダウンロードしてください。</p>
           <div class="file-box">
             <div class="file-row">
               <span class="file-label recommended">Apple M1/M2/M3</span>
@@ -451,6 +566,7 @@
               <span class="file-name">Kyosho.Backup_0.1.2_x64.dmg</span>
             </div>
           </div>
+          <p style="font-size:12px; color:#718096;">ファイルが見当たらない場合は、ページを少し下にスクロールすると「Assets」という欄にファイルが並んでいます。</p>
         </div>
       </div>
 
@@ -464,10 +580,15 @@
           <p>開いたウィンドウで <strong>Kyosho Backup</strong> のアイコンを <strong>Applications フォルダ</strong>にドラッグしてください。</p>
           <p>「上書きしますか？」と聞かれたら「置き換える」を選択します。</p>
           <div class="warning-box">
-            <div class="warning-title">⚠️「開発元を確認できないため開けません」と表示された場合</div>
+            <div class="warning-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              「開発元を確認できないため開けません」と表示された場合
+            </div>
             <ol class="warning-steps">
               <li>Finder で「アプリケーション」フォルダを開く</li>
-              <li>Kyosho Backup を<strong>右クリック</strong>→「開く」</li>
+              <li>Kyosho Backup を右クリック → 「開く」</li>
               <li>確認ダイアログで「開く」をクリック（初回のみ）</li>
             </ol>
           </div>
@@ -482,11 +603,17 @@
         <div class="step-body">
           <p>アプリを起動して確認してください：</p>
           <div class="file-box">
-            <div class="file-row">
-              <span>☑️&nbsp; 設定画面を開き、SSH 秘密鍵が引き継がれている</span>
+            <div class="check-row">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              設定画面を開き、SSH 秘密鍵が引き継がれている
             </div>
-            <div class="file-row">
-              <span>☑️&nbsp; 「接続テスト」が正常に完了する</span>
+            <div class="check-row">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              「接続テスト」が正常に完了する
             </div>
           </div>
         </div>
@@ -495,9 +622,13 @@
     </div>
 
     <div class="complete-banner">
-      <div class="complete-icon">🎉</div>
+      <div class="complete-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
       <div class="complete-text">
-        <h3>アップデート完了！</h3>
+        <h3>アップデート完了</h3>
         <p>これで特殊文字を含むフォルダ名でも正常にバックアップできます。</p>
       </div>
     </div>
@@ -506,16 +637,15 @@
 </div>
 
 <div class="footer">
-  Kyosho Backup v0.1.2 &nbsp;|&nbsp; © 2025 Yuta Matsuura &nbsp;|&nbsp;
-  問題が発生した場合はご連絡ください
+  Kyosho Backup v0.1.2 &nbsp;|&nbsp; &copy; 2026 FUNNY BOOTH &nbsp;|&nbsp; 問題が発生した場合はご連絡ください
 </div>
 
 <script>
-  function switchOS(os) {
+  function switchOS(os, e) {
     document.querySelectorAll('.os-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.os-panel').forEach(p => p.classList.remove('active'));
-    document.querySelector(`#panel-${os}`).classList.add('active');
-    event.currentTarget.classList.add('active');
+    document.querySelector('#panel-' + os).classList.add('active');
+    e.currentTarget.classList.add('active');
   }
 </script>
 

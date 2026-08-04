@@ -1,7 +1,7 @@
 {
   "name": "kyosho-backup",
   "private": true,
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "description": "Cross-platform server backup automation tool built with Tauri, React, and TypeScript",
   "scripts": {

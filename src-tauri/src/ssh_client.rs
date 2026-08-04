@@ -619,14 +619,38 @@ impl SshClient {
         format!("❌ エラーが発生しました: {}", error)
     }
 
-    /// Windowsで使用できないファイル名文字をアンダースコアに置換する
+    /// Windowsで使用できないファイル名文字・末尾文字・予約名をサニタイズする。
+    /// リモート(Linux)由来の名前を Windows で安全に扱えるフォルダ/ファイル名へ変換する。
     fn sanitize_filename(name: &str) -> String {
-        name.chars()
+        // 1. Windowsで使用できない文字をアンダースコアに置換（< > : " / \ | ? *）
+        let replaced: String = name
+            .chars()
             .map(|c| match c {
-                '?' | '*' | ':' | '"' | '<' | '>' | '|' => '_',
+                '<' | '>' | ':' | '"' | '/' | '\\' | '|' | '?' | '*' => '_',
                 _ => c,
             })
-            .collect()
+            .collect();
+
+        // 2. 末尾のスペース・ドットを除去（Windowsは末尾の '.'/' ' を落とすため不整合の原因）
+        let trimmed = replaced.trim_end_matches([' ', '.']);
+
+        // 3. 空になったらフォールバック
+        if trimmed.is_empty() {
+            return "_".to_string();
+        }
+
+        // 4. Windows予約名は先頭に '_' を付与（拡張子付きも基底名で判定、大文字小文字問わず）
+        const RESERVED: &[&str] = &[
+            "CON", "PRN", "AUX", "NUL",
+            "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+            "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
+        ];
+        let base = trimmed.split('.').next().unwrap_or(trimmed);
+        if RESERVED.iter().any(|r| r.eq_ignore_ascii_case(base)) {
+            return format!("_{}", trimmed);
+        }
+
+        trimmed.to_string()
     }
 
     /// 再帰的にディレクトリをバックアップする
@@ -846,5 +870,65 @@ impl Drop for SshClient {
         if let Some(session) = &self.session {
             let _ = session.disconnect(None, "Connection closed", None);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn forbidden_chars_become_underscore() {
+        // Windows禁止9文字がすべて '_' になる
+        assert_eq!(SshClient::sanitize_filename("a<b>c:d\"e/f\\g|h?i*j"), "a_b_c_d_e_f_g_h_i_j");
+        for c in ['<', '>', ':', '"', '/', '\\', '|', '?', '*'] {
+            assert_eq!(SshClient::sanitize_filename(&format!("x{}y", c)), "x_y");
+        }
+    }
+
+    #[test]
+    fn real_incident_case() {
+        // 実障害ケース: リモートの "?Coda テスト" が作成できずに失敗していた
+        assert_eq!(SshClient::sanitize_filename("?Coda テスト"), "_Coda テスト");
+    }
+
+    #[test]
+    fn slash_and_backslash() {
+        assert_eq!(SshClient::sanitize_filename("a/b\\c"), "a_b_c");
+    }
+
+    #[test]
+    fn trailing_dot_and_space_removed() {
+        assert_eq!(SshClient::sanitize_filename("name."), "name");
+        assert_eq!(SshClient::sanitize_filename("name "), "name");
+        assert_eq!(SshClient::sanitize_filename("name. . "), "name");
+    }
+
+    #[test]
+    fn reserved_names_get_prefixed() {
+        assert_eq!(SshClient::sanitize_filename("CON"), "_CON");
+        assert_eq!(SshClient::sanitize_filename("con.txt"), "_con.txt");
+        assert_eq!(SshClient::sanitize_filename("COM1"), "_COM1");
+        assert_eq!(SshClient::sanitize_filename("nul"), "_nul");
+    }
+
+    #[test]
+    fn reserved_name_substrings_not_affected() {
+        // 部分一致は誤爆させない
+        assert_eq!(SshClient::sanitize_filename("CONSOLE"), "CONSOLE");
+        assert_eq!(SshClient::sanitize_filename("COM10"), "COM10");
+    }
+
+    #[test]
+    fn japanese_names_unchanged() {
+        assert_eq!(SshClient::sanitize_filename("防音防振ネット"), "防音防振ネット");
+        assert_eq!(SshClient::sanitize_filename("wp-content"), "wp-content");
+    }
+
+    #[test]
+    fn empty_or_blank_falls_back() {
+        assert_eq!(SshClient::sanitize_filename(""), "_");
+        assert_eq!(SshClient::sanitize_filename("   "), "_");
+        assert_eq!(SshClient::sanitize_filename("..."), "_");
     }
 }

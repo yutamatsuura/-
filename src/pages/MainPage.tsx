@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import { getVersion } from '@tauri-apps/api/app';
 import { listen } from '@tauri-apps/api/event';
 import { open } from '@tauri-apps/plugin-shell';
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
@@ -30,6 +31,7 @@ import {
 
 const MainPage: React.FC = () => {
   const { isAuthenticated, isPinEnabled, isLoading, authenticate } = useAuth();
+  const [appVersion, setAppVersion] = useState<string>('');
   const [selectedLocalFolder, setSelectedLocalFolder] = useState<string>('');
   const [selectedKeyPath, setSelectedKeyPath] = useState<string>('');
   const [remoteFolder, setRemoteFolder] = useState<string>('');
@@ -47,6 +49,13 @@ const MainPage: React.FC = () => {
   const [currentFile, setCurrentFile] = useState<string>('');
   const [transferSpeed, setTransferSpeed] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState<number>(0);
+
+  // アプリの実バージョンを取得してバッジに表示（真実の源: tauri.conf.json）
+  useEffect(() => {
+    getVersion()
+      .then(setAppVersion)
+      .catch(() => setAppVersion(''));
+  }, []);
 
   // PIN認証の状態を監視し、必要に応じて認証モーダルを表示
   useEffect(() => {
@@ -327,7 +336,7 @@ const MainPage: React.FC = () => {
           </div>
         </div>
         <div className="header-badge">
-          <span className="version-badge">v2.0</span>
+          <span className="version-badge">{appVersion ? `v${appVersion}` : ''}</span>
         </div>
       </header>
 
